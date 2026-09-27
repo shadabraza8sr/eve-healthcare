@@ -1,21 +1,42 @@
 from fastapi import FastAPI
+from sqlalchemy import text
+
+from app.database import engine
+from app.routers.auth import router as auth_router
+from app.routers.bookings import router as bookings_router
+from app.routers.centre_tests import router as centre_tests_router
+from app.routers.diagnostic_centres import router as diagnostic_centres_router
+from app.routers.diagnostic_tests import router as diagnostic_tests_router
+from app.routers.payments import router as payments_router
+
 
 app = FastAPI(
     title="EVE Healthcare API",
-    description="Diagnostic test booking and simulated payment service",
     version="1.0.0",
 )
 
 
+app.include_router(auth_router)
+app.include_router(diagnostic_centres_router)
+app.include_router(diagnostic_tests_router)
+app.include_router(centre_tests_router)
+app.include_router(bookings_router)
+app.include_router(payments_router)
+
+
 @app.get("/")
 def root():
-    return {
-        "message": "EVE Healthcare API is running"
-    }
+    return {"message": "EVE Healthcare API is running"}
 
 
 @app.get("/health")
 def health_check():
-    return {
-        "status": "healthy"
-    }
+    return {"status": "ok"}
+
+
+@app.get("/health/db")
+def database_health_check():
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+
+    return {"status": "ok", "database": "connected"}
