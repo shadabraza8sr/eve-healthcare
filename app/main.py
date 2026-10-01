@@ -9,6 +9,7 @@ from app.routers.centre_tests import router as centre_tests_router
 from app.routers.diagnostic_centres import router as diagnostic_centres_router
 from app.routers.diagnostic_tests import router as diagnostic_tests_router
 from app.routers.payments import router as payments_router
+from app.routers.availability import router as availability_router
 
 
 app = FastAPI(
@@ -32,6 +33,7 @@ app.include_router(diagnostic_tests_router)
 app.include_router(centre_tests_router)
 app.include_router(bookings_router)
 app.include_router(payments_router)
+app.include_router(availability_router)
 
 
 @app.get("/")

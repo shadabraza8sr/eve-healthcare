@@ -31,6 +31,8 @@ def create_centre(
     centre = DiagnosticCentre(
         name=request.name,
         location=request.location,
+        opening_time=request.opening_time,
+        closing_time=request.closing_time,
     )
 
     db.add(centre)

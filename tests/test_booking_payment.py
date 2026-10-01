@@ -81,7 +81,12 @@ def test_booking_and_successful_payment():
 
     appointment = (
         datetime.now() + timedelta(days=1)
-    ).replace(microsecond=0).isoformat()
+    ).replace(
+        hour=11,
+        minute=0,
+        second=0,
+        microsecond=0,
+    ).isoformat()
 
     booking = client.post(
         "/bookings/",
@@ -118,6 +123,8 @@ def test_booking_and_successful_payment():
 
     assert updated_booking.status_code == 200
     assert updated_booking.json()["status"] == "CONFIRMED"
+
+
 def test_cancel_pending_booking():
     headers = get_auth_headers()
 
@@ -154,7 +161,12 @@ def test_cancel_pending_booking():
 
     appointment = (
         datetime.now() + timedelta(days=3)
-    ).replace(microsecond=0).isoformat()
+    ).replace(
+        hour=11,
+        minute=30,
+        second=0,
+        microsecond=0,
+    ).isoformat()
 
     booking = client.post(
         "/bookings/",

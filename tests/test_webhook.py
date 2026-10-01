@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime, timedelta
-import uuid
 
 from fastapi.testclient import TestClient
 
@@ -71,7 +70,12 @@ def setup_booking():
 
     appointment = (
         datetime.now() + timedelta(days=2)
-    ).replace(microsecond=0).isoformat()
+    ).replace(
+        hour=12,
+        minute=0,
+        second=0,
+        microsecond=0,
+    ).isoformat()
 
     booking = client.post(
         "/bookings/",
