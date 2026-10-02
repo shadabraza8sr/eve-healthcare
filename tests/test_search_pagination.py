@@ -107,3 +107,48 @@ def test_test_search_and_pagination():
     assert data["page"] == 1
     assert data["limit"] == 2
     assert len(data["items"]) <= 2
+
+def test_centre_pagination_limit_is_capped():
+    token = get_auth_token()
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    response = client.get(
+        "/centres/",
+        params={
+            "page": 1,
+            "limit": 200,
+        },
+        headers=headers,
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["limit"] == 100
+
+
+def test_test_pagination_limit_is_capped():
+    token = get_auth_token()
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+    }
+
+    response = client.get(
+        "/tests/",
+        params={
+            "page": 1,
+            "limit": 200,
+        },
+        headers=headers,
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["limit"] == 100
