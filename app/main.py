@@ -21,9 +21,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "https://eve-healthcare-frontend.onrender.com",
-    ],
+    "http://localhost:5173",
+    "https://eve-healthcare-frontend.onrender.com",
+    "https://eve-healthcare-frontend-new.onrender.com",
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
