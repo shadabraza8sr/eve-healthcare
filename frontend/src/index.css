@@ -1,7 +1,74 @@
-html,
-body,
-#root {
-  margin: 0;
+/* =========================================================
+   EVE HEALTHCARE
+   Global Base Styles
+   ========================================================= */
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
   min-width: 320px;
   min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgba(23, 105, 170, 0.16);
+  color: #102a43;
+}
+
+/* Cleaner scrollbar for desktop */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f8fb;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid #f5f8fb;
+  border-radius: 999px;
+  background: #cbd7e2;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aebdca;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd7e2 #f5f8fb;
 }

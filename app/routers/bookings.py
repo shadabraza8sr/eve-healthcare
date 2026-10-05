@@ -9,6 +9,7 @@ from app.dependencies import get_current_user
 from app.models.booking import Booking, BookingStatus
 from app.models.centre_test import CentreTest
 from app.models.diagnostic_centre import DiagnosticCentre
+from app.models.diagnostic_test import DiagnosticTest
 from app.models.user import User
 from app.schemas.booking import BookingCreate, BookingResponse
 
@@ -127,13 +128,55 @@ def create_booking(
     response_model=list[BookingResponse],
 )
 def list_my_bookings(
+    status_filter: BookingStatus | None = None,
+    search: str | None = None,
+    date_from: datetime | None = None,
+    date_to: datetime | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    bookings = db.scalars(
+    query = (
         select(Booking)
-        .where(Booking.user_id == current_user.id)
-        .order_by(Booking.id.desc())
+        .join(
+            DiagnosticCentre,
+            Booking.centre_id == DiagnosticCentre.id,
+        )
+        .join(
+            DiagnosticTest,
+            Booking.test_id == DiagnosticTest.id,
+        )
+        .where(
+            Booking.user_id == current_user.id
+        )
+    )
+
+    if status_filter is not None:
+        query = query.where(
+            Booking.status == status_filter
+        )
+
+    if search:
+        search_pattern = f"%{search.strip()}%"
+
+        query = query.where(
+            DiagnosticCentre.name.ilike(search_pattern)
+            | DiagnosticTest.name.ilike(search_pattern)
+        )
+
+    if date_from is not None:
+        query = query.where(
+            Booking.appointment_at >= date_from
+        )
+
+    if date_to is not None:
+        query = query.where(
+            Booking.appointment_at <= date_to
+        )
+
+    bookings = db.scalars(
+        query.order_by(
+            Booking.id.desc()
+        )
     ).all()
 
     return bookings

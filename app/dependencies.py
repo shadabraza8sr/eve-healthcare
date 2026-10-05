@@ -7,7 +7,9 @@ from app.models.user import User
 from app.security import decode_access_token
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/auth/login"
+)
 
 
 def get_current_user(
@@ -17,12 +19,14 @@ def get_current_user(
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid or expired authentication token",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={
+            "WWW-Authenticate": "Bearer"
+        },
     )
 
     try:
         user_id = decode_access_token(token)
-    except Exception:
+    except (ValueError, TypeError):
         raise credentials_exception
 
     user = db.get(User, user_id)

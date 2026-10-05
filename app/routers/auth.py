@@ -5,12 +5,16 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.dependencies import get_current_user
 from app.models.user import User
 from app.schemas.auth import SignupRequest, TokenResponse, UserResponse
 from app.security import create_access_token, hash_password, verify_password
 
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter(
+    prefix="/auth",
+    tags=["Authentication"],
+)
 
 
 @router.post(
@@ -42,8 +46,10 @@ def signup(
     try:
         db.commit()
         db.refresh(user)
+
     except IntegrityError:
         db.rollback()
+
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email is already registered",
@@ -60,13 +66,11 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
-    
-
     user = db.scalar(
-        select(User).where(User.email == form_data.username)
+        select(User).where(
+            User.email == form_data.username
+        )
     )
-
- 
 
     if user is None:
         raise HTTPException(
@@ -74,14 +78,10 @@ def login(
             detail="Invalid email or password",
         )
 
-    
-
     valid = verify_password(
         form_data.password,
         user.password_hash,
     )
-
-    
 
     if not valid:
         raise HTTPException(
@@ -91,9 +91,17 @@ def login(
 
     access_token = create_access_token(user.id)
 
-    
-
     return TokenResponse(
         access_token=access_token,
         token_type="bearer",
     )
+
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+)
+def get_me(
+    current_user: User = Depends(get_current_user),
+):
+    return current_user
